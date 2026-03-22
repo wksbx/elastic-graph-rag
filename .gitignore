@@ -20,3 +20,6 @@ Thumbs.db
 
 # Elasticsearch data (local dev)
 es-data/
+
+# GraphRAG cache (local dev)
+graph_cache/
