@@ -1,0 +1,62 @@
+# =============================================================================
+# AI-Powered Search Infrastructure
+# Elasticsearch + Kibana stack for hybrid search (BM25 + vector + ELSER)
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # Elasticsearch — single-node dev setup
+  # For production: use 3+ nodes, dedicated master/data roles, and persistent
+  # storage on fast SSDs. See config/elasticsearch.yml for tuning options.
+  # ---------------------------------------------------------------------------
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.0
+    container_name: es-search
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=false
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD:-changeme}
+      # Memory: set to 50% of available RAM, max 31g for compressed oops
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+      # Enable ML node for ELSER (learned sparse retrieval)
+      - xpack.ml.enabled=true
+      - xpack.license.self_generated.type=trial
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -u elastic:${ELASTIC_PASSWORD:-changeme} http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+
+  # ---------------------------------------------------------------------------
+  # Kibana — UI for index management, Dev Tools, and search testing
+  # ---------------------------------------------------------------------------
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.0
+    container_name: kb-search
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD:-changeme}
+    ports:
+      - "5601:5601"
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+volumes:
+  es-data:
+    driver: local

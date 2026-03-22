@@ -1,0 +1,12 @@
+elasticsearch>=8.17,<9
+python-dotenv>=1.0
+tiktoken>=0.7
+rich>=13.0
+
+# Embedding providers (install the one you use)
+voyageai>=0.3              # for EMBEDDING_MODEL=voyage
+openai>=1.0                # for EMBEDDING_MODEL=openai or LLM_PROVIDER=openai
+
+# LLM providers (install the one you use)
+anthropic>=0.40            # for LLM_PROVIDER=anthropic
+# openai is listed above   # for LLM_PROVIDER=openai

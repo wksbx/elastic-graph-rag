@@ -1,0 +1,33 @@
+# =============================================================================
+# Elasticsearch configuration
+# Tuned for AI search workloads (hybrid BM25 + vector + ELSER)
+# =============================================================================
+
+cluster.name: ai-search-cluster
+node.name: es-node-1
+
+# Network
+network.host: 0.0.0.0
+
+# Paths
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
+
+# ---------------------------------------------------------------------------
+# Index defaults for hybrid search
+# These apply to newly created indices. Override per-index as needed.
+# ---------------------------------------------------------------------------
+# Refresh interval: 1s is the default. For bulk ingestion, temporarily set
+# to -1 via the API, then reset after ingestion completes.
+
+# ---------------------------------------------------------------------------
+# Machine Learning (ELSER)
+# ELSER runs as an ML model on the node. For production, dedicate ML nodes
+# with GPU or high-memory to avoid competing with search workloads.
+# ---------------------------------------------------------------------------
+xpack.ml.max_machine_memory_percent: 30
+
+# ---------------------------------------------------------------------------
+# Circuit breakers — prevent OOM on large vector queries
+# ---------------------------------------------------------------------------
+indices.breaker.total.limit: 70%
