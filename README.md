@@ -1,4 +1,4 @@
-# elastic-rag
+# elastic-graph-rag
 
 Hybrid search and RAG over markdown documentation, powered by Elasticsearch and knowledge graphs.
 
