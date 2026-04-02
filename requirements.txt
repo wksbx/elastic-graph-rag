@@ -2,14 +2,14 @@ elasticsearch>=8.17,<9
 python-dotenv>=1.0
 tiktoken>=0.7
 rich>=13.0
-
 # Embedding providers (install the one you use)
 voyageai>=0.3              # for EMBEDDING_MODEL=voyage
-openai>=1.0                # for EMBEDDING_MODEL=openai or LLM_PROVIDER=openai
-
+openai>=1.68               # for EMBEDDING_MODEL=openai or LLM_PROVIDER=openai
 # LLM providers (install the one you use)
 anthropic>=0.40            # for LLM_PROVIDER=anthropic
 # openai is listed above   # for LLM_PROVIDER=openai
-
 # GraphRAG
 nano-graphrag>=0.0.8
+# Security pins
+pygments>=2.20.0           # CVE-2026-4539 (ReDoS in AdlLexer, CVSS 4.8 medium, PoC exists)
+zipp>=3.19.1               # CVE-2024-5569 (infinite loop, CVSS 6.9 medium) — only needed if supporting Python <3.12
